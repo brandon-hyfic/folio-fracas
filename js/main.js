@@ -4,13 +4,15 @@ import { createGame, tick, removeFighter } from './sim.js';
 import { encodeSnapshot, decodeSnapshot, lerpView } from './snapshot.js';
 import { computeAwards } from './awards.js';
 import { createRenderer } from './render.js';
+import { aimFromPoints } from './aim.js';
 import { createInput, encodeInput, decodeInput } from './input.js';
 import { hostRoom, joinRoom, peerAvailable } from './net.js';
 import * as audio from './audio.js';
 
 const $ = (id) => document.getElementById(id);
-const input = createInput();
 const renderer = createRenderer($('cv'));
+const input = createInput($('cv'));
+input.hooks.onRightClick = () => {}; // right mouse button: unbound for now (hook for a future action)
 addEventListener('resize', () => renderer.resize());
 renderer.resize();
 
@@ -25,8 +27,9 @@ const seatId = (i) => i + 1;
 // ---------- screens ----------
 function show(name) {
   S.screen = name;
-  for (const id of ['title', 'play', 'select', 'results']) $(id).classList.toggle('show', id === name);
+  for (const id of ['title', 'play', 'select', 'results', 'controls']) $(id).classList.toggle('show', id === name);
   $('matchBar').classList.toggle('show', name === 'match');
+  $('cv').style.cursor = name === 'match' ? 'none' : 'default';
 }
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => (t.style.display = 'none'), 2500); }
 const isHostLike = () => S.role === 'local' || S.role === 'host';
@@ -64,7 +67,7 @@ function renderSelect() {
     }
     el.innerHTML = `<div class="who">${who}</div>` + (s.kind === 'off' ? '<div class="blurb">Empty seat</div>' :
       `<div class="char"><button class="sm" data-a="prev" data-i="${i}" ${ed ? '' : 'disabled'}>&lt;</button><b>${esc(C.name)}</b><button class="sm" data-a="next" data-i="${i}" ${ed ? '' : 'disabled'}>&gt;</button></div>
-       <div class="blurb">${esc(C.blurb)}</div>` +
+       <div class="blurb">${esc(C.blurb)}<br>${['q', 'w', 'e', 'r'].map((k) => `<b>${k.toUpperCase()}</b> ${esc(C.kit[k].name)}`).join(' &middot; ')}</div>` +
       (s.kind === 'bot' ? `<button class="sm" data-a="diff" data-i="${i}" ${isHostLike() ? '' : 'disabled'}>Difficulty: ${s.diff}</button>` : ''));
     box.appendChild(el);
   });
@@ -108,6 +111,8 @@ $('settings').addEventListener('change', (e) => {
 // ---------- menu wiring ----------
 $('btnPlay').onclick = () => { audio.unlock(); show('play'); };
 $('btnPlayBack').onclick = () => show('title');
+$('btnControls').onclick = () => show('controls');
+$('btnControlsBack').onclick = () => show('title');
 $('peerNote').textContent = peerAvailable() ? 'Online play uses the free public PeerJS broker (third-party; can be down). Some networks block WebRTC.' : 'PeerJS did not load (offline?). Local play still works.';
 $('btnHost').disabled = $('btnJoin').disabled = !peerAvailable();
 try { $('nick').value = localStorage.getItem('ff.nick') || ''; } catch {}
@@ -255,6 +260,16 @@ function frame(now) {
   if (S.screen !== 'match' && S.screen !== 'results' && S.screen !== 'select' && S.screen !== 'title' && S.screen !== 'play') return;
   const inMatch = S.screen === 'match';
   const inp = input.read();
+  { // aim: gamepad right stick > mouse cursor > facing direction
+    const v0 = S.view, me0 = v0 && v0.fighters.find((f) => f.id === S.myId);
+    if (me0) {
+      let a;
+      if (inp.padAim) { const m = Math.hypot(inp.padAim.x, inp.padAim.y); a = { x: inp.padAim.x / m, y: inp.padAim.y / m }; }
+      else if (input.mouse.moved && S.screen === 'match') { const w = renderer.screenToWorld(input.mouse.x, input.mouse.y); a = aimFromPoints(me0.x, me0.y - 34 * me0.scale, w.x, w.y, me0.face); }
+      else a = { x: me0.face, y: 0 };
+      inp.ax = a.x; inp.ay = a.y;
+    } else { inp.ax = 0; inp.ay = 0; }
+  }
 
   if (isHostLike() && S.game) {
     const g = S.game;
@@ -284,7 +299,7 @@ function frame(now) {
     $('matchNote').textContent = '';
   } else if (S.role === 'client' && inMatch) {
     // send input at ~60 Hz when changed, heartbeat every 150 ms
-    const enc = encodeInput(inp), key = enc.b + ',' + enc.x + ',' + enc.y;
+    const enc = encodeInput(inp), key = enc.b + ',' + enc.x + ',' + enc.y + ',' + enc.a;
     if (key !== S.lastIn || now - S.lastSend > 150) { S.net.send({ t: 'in', ...enc }); S.lastIn = key; S.lastSend = now; }
     const sn = S.snaps;
     if (sn.length) {
@@ -298,7 +313,7 @@ function frame(now) {
   }
 
   const showView = S.view && (S.screen === 'match' || S.screen === 'results');
-  if (showView) renderer.draw(S.view, { roster: S.roster, myId: S.myId });
+  if (showView) renderer.draw(S.view, { roster: S.roster, myId: S.myId, cursor: S.screen === 'match' && !inp.padAim && input.mouse.moved ? input.mouse : null, cursorColor: PLAYER_COLORS[(S.roster[S.myId] || { color: 0 }).color % 8] });
   else renderer.draw(idleView, { roster: {}, myId: 0 });
 }
 const idleView = { fighters: [], ents: [], items: [], layout: 0, timeLeft: 0, sudden: false };

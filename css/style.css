@@ -45,3 +45,7 @@ label { display:block; margin:10px 0; }
 .matchbar.show { display:flex; }
 #toast { position:fixed; left:50%; top:16px; transform:translateX(-50%); background:#000c; padding:8px 16px; border-radius:10px; display:none; z-index:9; }
 @media (max-width:600px) { h1 { font-size:34px; } .card { padding:16px; } }
+
+.legend { font-size:12px; color:var(--mute); line-height:1.7; margin-top:6px; } .legend b { color:var(--acc); }
+table.ctl { width:100%; border-collapse:collapse; font-size:14px; } table.ctl td { padding:6px 8px; border-bottom:1px solid #ffffff12; } table.ctl td:first-child { color:var(--acc); }
+.seat .blurb b { color:var(--acc); }

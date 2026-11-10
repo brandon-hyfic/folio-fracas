@@ -13,8 +13,8 @@
   <div class="card center">
     <h1>Folio Fracas</h1>
     <p class="sub">A goofy storybook party brawler. Up to 4 players (8 possible), bots fill the gaps.</p>
-    <button id="btnPlay" class="big">Play</button>
-    <p class="hint">Keyboard or gamepad. Last one standing wins.</p>
+    <div class="row"><button id="btnPlay" class="big">Play</button><button id="btnControls" class="big alt">Controls</button></div>
+    <p class="hint">Keyboard + mouse, or gamepad. Last one standing wins.</p>
   </div>
 </section>
 
@@ -46,7 +46,27 @@
       <button id="btnSelBack" class="ghost">Leave</button>
       <button id="btnStart" class="big">Start match</button>
     </div>
-    <p class="hint">Move: WASD / arrows. Jump: W / Space. Light: J. Heavy (hold, release): K. Special: L (Down+L for alt). Shield/dodge: Shift. Taunt: T. Drop through pages: Down. Gamepad: A jump, X light, Y heavy, B special, bumpers shield.</p>
+    <div class="legend"><b>Move</b> A/D &middot; <b>Jump</b> Space (x2) &middot; <b>Down</b> S &middot; <b>Attack</b> Left click toward cursor (hold to charge) &middot; <b>Abilities</b> Q W E &middot; <b>Ultimate</b> R (full meter) &middot; <b>Shield/dodge</b> Shift (+direction) &middot; <b>Taunt</b> T</div>
+  </div>
+</section>
+
+<section id="controls" class="screen">
+  <div class="card">
+    <h2>Controls</h2>
+    <table class="ctl">
+      <tr><td>Move</td><td>A / D (or arrow keys)</td><td>Left stick / d-pad</td></tr>
+      <tr><td>Jump, double jump</td><td>Space</td><td>A</td></tr>
+      <tr><td>Fast-fall / drop through a page</td><td>S</td><td>Stick down</td></tr>
+      <tr><td>Attack (aimed at the cursor, works in the air)</td><td>Left click: tap = light, hold and release = charged</td><td>X (aim with right stick)</td></tr>
+      <tr><td>Ability 1 / 2 / 3</td><td>Q / W / E (aimed at the cursor)</td><td>Y / B / LB</td></tr>
+      <tr><td>Ultimate (needs a full meter)</td><td>R</td><td>RB</td></tr>
+      <tr><td>Shield (hold), dodge (+direction)</td><td>Shift</td><td>LT / RT</td></tr>
+      <tr><td>Taunt</td><td>T</td><td>Back</td></tr>
+      <tr><td>Right mouse</td><td>Unbound for now</td><td></td></tr>
+      <tr><td>Mute / leave match</td><td>M / Esc</td><td></td></tr>
+    </table>
+    <p class="hint">The ultimate meter fills as you deal and take damage (about once per stock). Without a mouse the attack aims where you face, or with the gamepad right stick.</p>
+    <div class="row"><button id="btnControlsBack" class="big">Back</button></div>
   </div>
 </section>
 
