@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folio Fracas</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<section id="title" class="screen show">
+  <div class="card center">
+    <h1>Folio Fracas</h1>
+    <p class="sub">A goofy storybook party brawler. Up to 4 players (8 possible), bots fill the gaps.</p>
+    <button id="btnPlay" class="big">Play</button>
+    <p class="hint">Keyboard or gamepad. Last one standing wins.</p>
+  </div>
+</section>
+
+<section id="play" class="screen">
+  <div class="card center">
+    <h2>Play</h2>
+    <label>Nickname <input id="nick" maxlength="12" placeholder="Player" autocomplete="off"></label>
+    <div class="row">
+      <button id="btnLocal" class="big">Local vs bots</button>
+      <button id="btnHost" class="big alt">Host online</button>
+    </div>
+    <div class="row">
+      <input id="code" maxlength="5" placeholder="ROOM CODE" autocomplete="off" spellcheck="false">
+      <button id="btnJoin" class="big alt">Join</button>
+    </div>
+    <p id="playMsg" class="msg"></p>
+    <p class="hint" id="peerNote"></p>
+    <button id="btnPlayBack" class="ghost">Back</button>
+  </div>
+</section>
+
+<section id="select" class="screen">
+  <div class="card wide">
+    <div class="topline"><h2>Pick your fighters</h2><div id="roomInfo"></div></div>
+    <div id="seats" class="seats"></div>
+    <div id="settings" class="settings"></div>
+    <p id="selMsg" class="msg"></p>
+    <div class="row end">
+      <button id="btnSelBack" class="ghost">Leave</button>
+      <button id="btnStart" class="big">Start match</button>
+    </div>
+    <p class="hint">Move: WASD / arrows. Jump: W / Space. Light: J. Heavy (hold, release): K. Special: L (Down+L for alt). Shield/dodge: Shift. Taunt: T. Drop through pages: Down. Gamepad: A jump, X light, Y heavy, B special, bumpers shield.</p>
+  </div>
+</section>
+
+<section id="results" class="screen">
+  <div class="card center">
+    <h2 id="winner">Winner</h2>
+    <div id="awards" class="awards"></div>
+    <div class="row">
+      <button id="btnRematch" class="big">Rematch</button>
+      <button id="btnChange" class="big alt">Change fighters</button>
+    </div>
+    <p id="resMsg" class="msg"></p>
+  </div>
+</section>
+
+<div id="matchBar" class="matchbar">
+  <span id="matchNote"></span>
+  <button id="btnMute" class="ghost sm">Sound: on</button>
+  <button id="btnLeave" class="ghost sm">Leave</button>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
